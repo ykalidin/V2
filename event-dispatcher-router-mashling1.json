@@ -1,0 +1,93 @@
+{
+  "mashling_schema": "1.0",
+  "gateway": {
+    "name": "MyProxy",
+    "version": "1.0.0",
+    "description": "This is a simple proxy.",
+    "triggers": [
+      {
+        "name": "MyProxy",
+        "description": "The trigger on kafka 'publishpet' topic",
+        "type": "github.com/TIBCOSoftware/flogo-contrib/trigger/kafkasub",
+        "settings": {
+          "BrokerUrl": "localhost:9092"
+        },
+        "handlers": [
+          {
+            "dispatch": "kafka_trigger",
+            "settings": {
+              "Topic": "users"
+            }
+          }
+        ]
+      }
+    ],
+    "dispatches": [
+      {
+        "name": "kafka_trigger",
+        "routes": [
+          { 
+            "if": "JSON.parse(payload.message).country == 'USA'",
+            "steps": [
+              { 
+                "service": "FlogoKafkaUsaFlow",
+                "input": {
+                  "inputs.message": "${payload.message}"
+                }
+              }
+            ],
+            "responses": [
+              {
+                "error": false,
+                "output": {
+                  "code": 200,
+                  "format": "json",
+                  "body.pet": "${FlogoKafkaUsaFlow.response.outputs.data}"
+                }
+              }
+            ]
+          },
+          { 
+            "if": "JSON.parse(payload.message).country == 'IND' || JSON.parse(payload.message).country == 'JPN' || JSON.parse(payload.message).country == 'CHN'",
+            "steps": [
+              { 
+                "service": "FlogoKafkaAsiaFlow",
+                "input": {
+                  "inputs.message": "${payload.message}"
+                }
+              }
+            ],
+            "responses": [
+              {
+                "error": false,
+                "output": {
+                  "code": 200,
+                  "format": "json",
+                  "body.pet": "${FlogoKafkaAsiaFlow.response.outputs.data}"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "services": [
+      {
+        "name": "FlogoKafkaUsaFlow",
+        "description": "Make GET calls against a remote HTTP service using a Flogo flow.",
+        "type": "flogoFlow",
+        "settings": {
+          "reference": "github.com/TIBCOSoftware/mashling/lib/flow/kafkaFlow.json"
+        }
+      },
+      {
+        "name": "FlogoKafkaAsiaFlow",
+        "description": "Make GET calls against a remote HTTP service using a Flogo flow.",
+        "type": "flogoFlow",
+        "settings": {
+          "reference": "github.com/TIBCOSoftware/mashling/lib/flow/kafkaFlow.json"
+        }
+      }
+    ]
+  }
+}

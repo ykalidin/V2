@@ -1,0 +1,66 @@
+{
+  "mashling_schema": "1.0",
+  "gateway": {
+    "name": "MyProxy",
+    "version": "1.0.0",
+    "description": "This is a simple proxy.",
+    "triggers": [
+      {
+        "name": "MyProxy",
+        "description": "Animals rest trigger - PUT animal details",
+        "type": "github.com/TIBCOSoftware/mashling/ext/flogo/trigger/gorillamuxtrigger",
+        "settings": {
+          "port": "9096"
+        },
+        "handlers": [
+          {
+            "dispatch": "Pets1",
+            "settings": {
+              "autoIdReply": "false",
+              "method": "PUT",
+              "path": "/petEvent",
+              "useReplyHandler": "false"
+            }
+          }
+        ]
+      }
+    ],
+    "dispatches": [
+      {
+        "name": "Pets1",
+        "routes": [
+          {
+            "steps": [
+              {
+                "service": "FlogoRestPutFlow",
+                "input": {
+                  "inputs.content": "${payload.content}"
+                }
+              }
+            ],
+            "responses": [
+              {
+                "error": false,
+                "output": {
+                  "code": 200,
+                  "format": "json",
+                  "body": "Success"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "services": [
+      {
+        "name": "FlogoRestPutFlow",
+        "description": "Make GET calls against a remote HTTP service using a Flogo flow.",
+        "type": "flogoFlow",
+        "settings": {
+          "reference": "github.com/TIBCOSoftware/mashling/lib/flow/RestTriggerToKafkaActivity.json"
+        }
+      }
+    ]
+  }
+}
