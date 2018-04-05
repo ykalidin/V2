@@ -10,7 +10,8 @@
         "description": "Animals rest trigger - PUT animal details",
         "type": "github.com/TIBCOSoftware/mashling/ext/flogo/trigger/gorillamuxtrigger",
         "settings": {
-          "port": "9096"
+          "port": "9096",
+          "basicAuthFile": "${env.BASIC_AUTH_FILE}"
         },
         "handlers": [
           {
