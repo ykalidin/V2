@@ -34,7 +34,7 @@
               {
                 "service": "FlogoRestPutFlow",
                 "input": {
-                  "inputs.content": "${payload.content.___copy___}"
+                  "inputs.content": "${payload.content}"
                 }
               }
             ],
