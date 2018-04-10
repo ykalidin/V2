@@ -75,7 +75,7 @@
         "name": "Pets1",
         "routes": [
           {
-            "if": "JSON.parse(payload.content.___copy___).name == 'SPARROW'",
+            "if": "JSON.parse(payload.content).name == 'SPARROW'",
             "steps": [
               {
                 "service": "birds_put",
@@ -106,7 +106,7 @@
             ]
           },
           {
-            "if": "JSON.parse(payload.content.___copy___).name == 'ELEPHANT' || JSON.parse(payload.content.___copy___).name == 'CAT'",
+            "if": "JSON.parse(payload.content).name == 'ELEPHANT' || JSON.parse(payload.content).name == 'CAT'",
             "steps": [
               {
                 "service": "mammals_put",
